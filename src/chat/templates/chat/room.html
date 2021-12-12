@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/chat_room.css'%}" />
+
+{% endblock styles %}
+{% block content %}
+
+
+<div class="container">
+    <div class="panel messages-panel">
+        <div class="tab-pane message-body active">
+            <div class="message-top">
+
+                <a class="btn" onclick="chat_NS.left_room();"> <i class="fa fa-door-open"></i> Left {{room_name}} room</a>
+            </div>
+
+            <div class="message-chat">
+                <div class="chat-body"></div>
+
+                <div class="chat-footer">
+                    <textarea id="messageBodyText" class="send-message-text"></textarea>
+                    <button id="sendMessageBtn" type="button" class="send-message-button btn-info" title="send"> <i class="fas fa-paper-plane text-light"></i> </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{ room_name|json_script:"room-name" }}
+
+{% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/chat_room.js'%}"></script>
+
+
+<script>
+    if(!localStorage.getItem('username'))
+        window.location.pathname = '/chat/';
+
+
+    $(document).ready(function () {
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        chat_NS.init_chat_socket(roomName);
+
+    });
+
+
+    $("#messageBodyText").focus();
+    $("#messageBodyText").on('keyup', function (e) {
+        if (e.keyCode === 13) {  // enter pressed
+            $("#sendMessageBtn").click();
+        }
+    })
+
+    $("#sendMessageBtn").on('click', function (e) {
+        let message = $("#messageBodyText").val();
+        if (!message || !message.trim())
+            return;
+
+        $("#messageBodyText").val('');
+        chat_NS.socket_send(JSON.stringify({
+            'message': message,
+            'username': localStorage.getItem('username'),
+            'command': 'new_message'
+        }))
+
+    })
+</script>
+{% endblock scripts %}

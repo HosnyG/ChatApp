@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+<div class="vertical-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-6">
+                <div class="card p-xl-4 p-md-3 p-xs-2">
+                    <div class="card-header " style="background-color: white;">
+                        <h1 class="text-center">Chat App - Login</h1>
+                    </div>
+                    <div class="card-body">
+                        <form onsubmit="formSubmit();">
+                            <div class="form-group mt-3">
+                                <label>name</label>
+                                <input id="nameInput" class="form-control" type="text" required></input>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label>room name</label>
+                                <input id="roomInput" class="form-control" type="text" required></input>
+                            </div>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-dark ">Join Room</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+        $("form").submit(function (e) {
+            e.preventDefault();
+        });
+        $("#nameInput").focus()
+        let savedName = localStorage.getItem('username');
+        if(savedName)
+            $("#nameInput").val(savedName);
+    });
+
+
+    function formSubmit(e){
+            let name = $("#nameInput").val();
+            let room = $("#roomInput").val();
+            localStorage.setItem('username',name);
+            window.location.pathname = '/chat/' + room + '';
+        }
+</script>
+{% endblock scripts %}
